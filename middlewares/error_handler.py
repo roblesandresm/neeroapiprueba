@@ -1,13 +1,13 @@
 from starlette.middleware.base import BaseHTTPMiddleware
-from fastapi import FastApi, Resquest, Response
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 
 class ErrorHandler(BaseHTTPMiddleware):
     
-    def __init__(self, app: FastApi):
+    def __init__(self, app: FastAPI):
         super().__init__(app)
 
-    async def dispatch(self, request: Resquest, call_next) -> Response | JSONResponse:
+    async def dispatch(self, request: Request, call_next) -> Response | JSONResponse:
         try:
             return await call_next(request)
         except Exception as e:

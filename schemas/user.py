@@ -4,7 +4,7 @@ from typing import Optional, List
 class UserSchema(BaseModel):
     id: Optional[int]
     first_name: str = Field(min_length=5, max_length=150)
-    last_name: str = Field(min_length=5, max_length=15)
+    last_name: str = Field(min_length=5, max_length=150)
     dni: int
     email: str = Field(min_length=10, max_length=100)
     password: str = Field(min_length=8, max_length=30)

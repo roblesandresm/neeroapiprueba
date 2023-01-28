@@ -10,4 +10,4 @@ class User(SQLModel, table=True):
     dni: int
     email: str
     password: str
-    state = int
+    state: int

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from models.establecimient import Establecimient as EstablecimientModel
@@ -6,6 +6,7 @@ from schemas.establecimient import EstablecimientSchema
 from config.database import engine
 from sqlmodel import Session
 from typing import List
+from middlewares.auth_handler import JWTBearer
 
 router = APIRouter(
     prefix="/api/establecimients",
@@ -28,8 +29,8 @@ def get_establecimient(id: int = Path(ge=1))-> EstablecimientSchema:
         return JSONResponse(status_code=404, content={"message": "establecimient not found"})
     return JSONResponse(status_code=200, content=jsonable_encoder(result))
 
-# create establecimients
-@router.post("/", tags=["establecimients"], response_model=dict, status_code=201)
+# create establecimients, proteccion inicial de esta ruta
+@router.post("/", tags=["establecimients"], response_model=dict, status_code=201, dependencies=[Depends(JWTBearer())])
 def create_establecimients(establecimient: EstablecimientSchema):
     # crear una sesion para conectarme a la base de datos
     db = Session(engine)

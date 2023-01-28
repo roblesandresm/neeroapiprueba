@@ -6,6 +6,7 @@ from models.user import User as UserModel
 from config.database import engine
 from sqlmodel import Session
 from typing import List
+from services.user import UserService
 
 router = APIRouter(
     prefix="/api/users",
@@ -16,16 +17,14 @@ router = APIRouter(
 @router.get("/")
 async def get_users() -> List[UserSchema]:
     db = Session(engine)
-    result = db.query(UserModel).all()
+    result = UserService(db).get_users()
     return JSONResponse(status_code=200, content=jsonable_encoder(result))
 
 # endpoint get an user
 @router.get("/{id}", tags=["users"], response_model=UserSchema)
 def get_user(id: int = Path(ge=1)) -> UserSchema:
     db = Session(engine)
-    result = db.query(UserModel).filter(UserModel.id == id).first()
-    if not result:
-        return JSONResponse(status_code=404, content={"message": "user not found"})
+    result = UserService(db).get_user(id)
     return JSONResponse(status_code=200,content=jsonable_encoder(result))
 
 # endpoint create user
@@ -33,38 +32,21 @@ def get_user(id: int = Path(ge=1)) -> UserSchema:
 async def create_users(user: UserSchema) -> dict:
     # crear una sesion para conectarme a la base de datos
     db = Session(engine)
-    print(user)
-    new_user = UserModel(**user.dict())
-    db.add(new_user)
-    db.commit()
+    UserService(db).create_user(user)
     #users.append(jsonable_encoder(user))
     return JSONResponse(status_code=201, content={"message": "Se ha registro el usuario"})
 
 # update a user
 @router.put("/{id}", tags=["users"], response_model=dict, status_code=200)
-def update_movie(id: int, user: UserSchema) -> dict:
+def update_user(id: int, user: UserSchema) -> dict:
     db = Session(engine)
-    result = db.query(UserModel).filter(UserModel.id == id).first()
-    if not result:
-        return JSONResponse(status_code=404, content={"message": "user not found"})
-    result.first_name = user.first_name
-    result.last_name = user.last_name
-    result.dni = user.dni
-    result.email = user.email
-    result.password = user.password
-    result.state = user.state
-    # seve data
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "user update with success"})
+    result = UserService(db).update_user(id, user)
+    return JSONResponse(status_code=200, content=result)
 
 # delete user
 @router.delete("/{id}", tags=["users"], response_model=dict, status_code=200)
-def delete_movie(id: int) -> dict:
+def delete_user(id: int) -> dict:
     db = Session(engine)
-    result = db.query(UserModel).filter(UserModel.id == id).first()
-    if not result:
-        return JSONResponse(status_code=404, content={"message": "user not found"})
-    db.delete(result)
-    db.commit()
+    UserService(db).delete_user(id)
     return JSONResponse(status_code=200, content={"message": "user delete with success"})
 

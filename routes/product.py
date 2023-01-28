@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from models.product import Product as ProductModel
@@ -6,6 +6,7 @@ from schemas.product import ProductSchema
 from config.database import engine
 from sqlmodel import Session
 from typing import List
+# from middlewares.auth_handler import JWTBearer
 
 router = APIRouter(
     prefix="/api/products",
