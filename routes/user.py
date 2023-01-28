@@ -47,6 +47,6 @@ def update_user(id: int, user: UserSchema) -> dict:
 @router.delete("/{id}", tags=["users"], response_model=dict, status_code=200)
 def delete_user(id: int) -> dict:
     db = Session(engine)
-    UserService(db).delete_user(id)
-    return JSONResponse(status_code=200, content={"message": "user delete with success"})
+    result = UserService(db).delete_user(id)
+    return JSONResponse(status_code=200, content=result)
 

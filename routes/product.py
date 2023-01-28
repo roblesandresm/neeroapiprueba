@@ -6,6 +6,7 @@ from schemas.product import ProductSchema
 from config.database import engine
 from sqlmodel import Session
 from typing import List
+from services.product import ProductService
 # from middlewares.auth_handler import JWTBearer
 
 router = APIRouter(
@@ -16,16 +17,14 @@ router = APIRouter(
 @router.get("/", response_model=list[ProductSchema])
 def get_products() -> List[ProductSchema]:
     db = Session(engine)
-    result = db.query(ProductModel).all()
+    result = ProductService(db).get_products()
     return JSONResponse(status_code=200, content=jsonable_encoder(result))
 
 # endpoint get a product
 @router.get("/{id}", tags=["products"], response_model=ProductSchema)
 def get_product(id: int = Path(ge=1)) -> ProductSchema:
     db = Session(engine)
-    result = db.query(ProductModel).filter(ProductModel.id == id).first()
-    if not result:
-        return JSONResponse(status_code=404, content={"message": "product not found"})
+    return ProductService(db).get_product(id)
     return JSONResponse(status_code=200,content=jsonable_encoder(result))
 
 # endpoint create a product
@@ -33,33 +32,19 @@ def get_product(id: int = Path(ge=1)) -> ProductSchema:
 async def create_products(product: ProductSchema) -> dict:
     # crear una sesion para conectarme a la base de datos
     db = Session(engine)
-    new_product = ProductModel(**product.dict())
-    db.add(new_product)
-    db.commit()
+    ProductService(db).create_product(product)
     return JSONResponse(status_code=201, content={"message": "product register with success"})
 
 # update a product
 @router.put("/{id}", tags=["products"], response_model=dict, status_code=200)
-def update_movie(id: int, product: ProductSchema) -> dict:
+def update_product(id: int, product: ProductSchema) -> dict:
     db = Session(engine)
-    result = db.query(ProductModel).filter(ProductModel.id == id).first()
-    if not result:
-        return JSONResponse(status_code=404, content={"message": "product not found"})
-    result.name = product.name
-    result.image = product.image
-    result.tipo = product.tipo
-    result.state = product.state
-    # seve data
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "product update with success"})
+    result = ProductService(db).update_product(id, product)
+    return JSONResponse(status_code=200, content=result)
 
 # delete product
 @router.delete("/{id}", tags=["products"], response_model=dict, status_code=200)
-def delete_movie(id: int) -> dict:
+def delete_product(id: int) -> dict:
     db = Session(engine)
-    result = db.query(ProductModel).filter(ProductModel.id == id).first()
-    if not result:
-        return JSONResponse(status_code=404, content={"message": "product not found"})
-    db.delete(result)
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "product delete with success"})
+    result = ProductService(db).delete_product(id)
+    return JSONResponse(status_code=200, content=result)
