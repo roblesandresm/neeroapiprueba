@@ -3,8 +3,11 @@ import uvicorn
 from routes import user, product, briefcase, establecimient
 from config.database import engine
 from sqlmodel import SQLModel
+from middlewares.error_handler import ErrorHandler
 
 app = FastAPI(title="Api POS", version="0.0.1")
+
+app.add_middleware(ErrorHandler)
 
 SQLModel.metadata.create_all(engine)
 
