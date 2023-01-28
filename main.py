@@ -1,13 +1,12 @@
 from fastapi import FastAPI
 import uvicorn
 from routes import user, product, briefcase, establecimient
-from config.database import engine, Base, Session
+from config.database import engine
+from sqlmodel import SQLModel
 
 app = FastAPI(title="Api POS", version="0.0.1")
 
-Base.metadata.create_all(bind=engine)
-db = Session()
-db.close()
+SQLModel.metadata.create_all(engine)
 
 # register of routes
 app.include_router(user.router)

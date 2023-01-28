@@ -1,14 +1,14 @@
-from config.database import Base
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+from typing import Optional
 
-class ProductModel(Base):
-    __tablename__ = "products"
+from sqlmodel import Field, SQLModel
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    image = Column(String)
-    tipo = Column(Integer)
-    state = Column(Integer)
 
-    briefcases = relationship("briefcase", secondary='briefcase_product')
+class Product(SQLModel, table=True):
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    image: str
+    tipo: str
+    state = int
+
+    # briefcases = relationship("briefcase", secondary='briefcase_product')

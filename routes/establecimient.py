@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Path
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from models.establecimient import EstablecimientModel
+from models.establecimient import Establecimient as EstablecimientModel
 from schemas.establecimient import EstablecimientSchema
-from config.database import engine, Session
+from config.database import session
 from typing import List
 
 router = APIRouter(
@@ -14,14 +14,14 @@ router = APIRouter(
 # get establecimients
 @router.get("/", response_model=list[EstablecimientSchema])
 def get_establecimients() -> List[EstablecimientSchema]:
-    db = Session()
+    db = session()
     result = db.query(EstablecimientModel).all()
     return JSONResponse(status_code=200, content=jsonable_encoder(result))
 
 # get an establecimient 
 @router.get("/{id}", response_model=EstablecimientSchema)
 def get_establecimient(id: int = Path(ge=1))-> EstablecimientSchema:
-    db = Session()
+    db = session()
     result = db.query(EstablecimientModel).filter(EstablecimientModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "establecimient not found"})
@@ -31,7 +31,7 @@ def get_establecimient(id: int = Path(ge=1))-> EstablecimientSchema:
 @router.post("/", tags=["establecimients"], response_model=dict, status_code=201)
 def create_establecimients(establecimient: EstablecimientSchema):
     # crear una sesion para conectarme a la base de datos
-    db = Session()
+    db = session()
     new_establecimient = EstablecimientModel(**establecimient.dict())
     db.add(new_establecimient)
     db.commit()
@@ -39,7 +39,7 @@ def create_establecimients(establecimient: EstablecimientSchema):
 
 @router.put("/{id}", tags=["establecimients"], response_model=dict, status_code=200)
 def update_establecimient(id: int, establecimient: EstablecimientSchema) -> dict:
-    db = Session()
+    db = session()
     result = db.query(EstablecimientModel).filter(EstablecimientModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "establecimient not found"})
@@ -53,7 +53,7 @@ def update_establecimient(id: int, establecimient: EstablecimientSchema) -> dict
 
 @router.delete("/{id}", tags=["establecimients"], response_model=dict, status_code=200)
 def delete_establecimient(id: int) -> dict:
-    db = Session()
+    db = session()
     result = db.query(EstablecimientModel).filter(EstablecimientModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "establecimient not found"})

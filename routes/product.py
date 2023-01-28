@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Path
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from models.product import ProductModel
+from models.product import Product as ProductModel
 from schemas.product import ProductSchema
-from config.database import engine, Session
+from config.database import engine, session
 from typing import List
 
 router = APIRouter(
@@ -13,14 +13,14 @@ router = APIRouter(
 
 @router.get("/", response_model=list[ProductSchema])
 def get_products() -> List[ProductSchema]:
-    db = Session()
+    db = session()
     result = db.query(ProductModel).all()
     return JSONResponse(status_code=200, content=jsonable_encoder(result))
 
 # endpoint get a product
 @router.get("/{id}", tags=["products"], response_model=ProductSchema)
 def get_product(id: int = Path(ge=1)) -> ProductSchema:
-    db = Session()
+    db = session()
     result = db.query(ProductModel).filter(ProductModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "product not found"})
@@ -30,7 +30,7 @@ def get_product(id: int = Path(ge=1)) -> ProductSchema:
 @router.post("/", tags=["products"], response_model=dict, status_code=201)
 async def create_products(product: ProductSchema) -> dict:
     # crear una sesion para conectarme a la base de datos
-    db = Session()
+    db = session()
     new_product = ProductModel(**product.dict())
     db.add(new_product)
     db.commit()
@@ -39,7 +39,7 @@ async def create_products(product: ProductSchema) -> dict:
 # update a product
 @router.put("/{id}", tags=["products"], response_model=dict, status_code=200)
 def update_movie(id: int, product: ProductSchema) -> dict:
-    db = Session()
+    db = session()
     result = db.query(ProductModel).filter(ProductModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "product not found"})
@@ -54,7 +54,7 @@ def update_movie(id: int, product: ProductSchema) -> dict:
 # delete product
 @router.delete("/{id}", tags=["products"], response_model=dict, status_code=200)
 def delete_movie(id: int) -> dict:
-    db = Session()
+    db = session()
     result = db.query(ProductModel).filter(ProductModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "product not found"})

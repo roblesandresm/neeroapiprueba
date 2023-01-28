@@ -1,13 +1,13 @@
-from config.database import Base
-from sqlalchemy import Column, Integer, String
+from typing import Optional
 
-class UserModel(Base):
-    __tablename__ = "users"
+from sqlmodel import Field, SQLModel
 
-    id = Column(Integer, primary_key=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    dni = Column(Integer)
-    email = Column(String)
-    password = Column(String)
-    state = Column(Integer)
+class User(SQLModel, table=True):
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    first_name: str
+    last_name: str
+    dni: int
+    email: str
+    password: str
+    state = int
