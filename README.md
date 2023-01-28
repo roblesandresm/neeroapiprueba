@@ -46,3 +46,22 @@ Luego se necesita instalar las dependencias del proyecto listada en el archivo *
 ~~~
 >> pip install -r requirements.txt
 ~~~
+
+Para correr el proyecto se debe posicionar en el directorio raiz y correr el seguiente comanzo para lanzar el servidor.
+
+~~~
+>> python main.py
+~~~
+
+El servidor estara corriendo en la siguiente ruta [FastApi](http://localhost:8000/api)
+La documentacion de la api esta construida por el mismo FastApi haciendo uso de swagger [Swagger](https://swagger.io/) implementacion de ***OpenApi***.
+
+Luego de correr el servidor de desarrollo se puede acceder a la documentacion de esta api por el siguiente enlace [api docs](http://127.0.0.1:8000/docs#/).
+
+
+## Comentarios finales
+
+### Porque usar FastApi y Sqlite
+
+Por medio de este soluccion si bien quedaron muchas validaciones pendiente, trate de poder todo el 100% en realizacion de la misma, decidi trabajar con ***FatsApi*** como framework por su velocidad y por su flexibilidad a la hora de ordenar el codigo tomando en consideracion las necesidades, frente a otras alternativas como ***Django***. Utilice para a base de datos ***sqlite*** por cierto inconvenientes que no me permitieron usar mysql o postgres, pero creo que al momento de desarrolla en ambiente de desarrollo sqlite puede ayudar hacer las cosas mas rapido.
+
