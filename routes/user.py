@@ -3,7 +3,8 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from schemas.user import UserSchema
 from models.user import User as UserModel
-from config.database import session
+from config.database import engine
+from sqlmodel import Session
 from typing import List
 
 router = APIRouter(
@@ -14,14 +15,14 @@ router = APIRouter(
 # endpoint get all users
 @router.get("/")
 async def get_users() -> List[UserSchema]:
-    db = session()
+    db = Session(engine)
     result = db.query(UserModel).all()
     return JSONResponse(status_code=200, content=jsonable_encoder(result))
 
 # endpoint get an user
 @router.get("/{id}", tags=["users"], response_model=UserSchema)
 def get_user(id: int = Path(ge=1)) -> UserSchema:
-    db = session()
+    db = Session(engine)
     result = db.query(UserModel).filter(UserModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "user not found"})
@@ -31,7 +32,8 @@ def get_user(id: int = Path(ge=1)) -> UserSchema:
 @router.post("/", tags=["users"], response_model=dict, status_code=201)
 async def create_users(user: UserSchema) -> dict:
     # crear una sesion para conectarme a la base de datos
-    db = session()
+    db = Session(engine)
+    print(user)
     new_user = UserModel(**user.dict())
     db.add(new_user)
     db.commit()
@@ -41,7 +43,7 @@ async def create_users(user: UserSchema) -> dict:
 # update a user
 @router.put("/{id}", tags=["users"], response_model=dict, status_code=200)
 def update_movie(id: int, user: UserSchema) -> dict:
-    db = session()
+    db = Session(engine)
     result = db.query(UserModel).filter(UserModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "user not found"})
@@ -58,7 +60,7 @@ def update_movie(id: int, user: UserSchema) -> dict:
 # delete user
 @router.delete("/{id}", tags=["users"], response_model=dict, status_code=200)
 def delete_movie(id: int) -> dict:
-    db = session()
+    db = Session(engine)
     result = db.query(UserModel).filter(UserModel.id == id).first()
     if not result:
         return JSONResponse(status_code=404, content={"message": "user not found"})
