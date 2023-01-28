@@ -57,7 +57,7 @@ def delete_movie(id: int) -> dict:
     db = Session()
     result = db.query(ProductModel).filter(ProductModel.id == id).first()
     if not result:
-        return JSONResponse(status_code=404, content={"message": "user not found"})
+        return JSONResponse(status_code=404, content={"message": "product not found"})
     db.delete(result)
     db.commit()
     return JSONResponse(status_code=200, content={"message": "product delete with success"})
