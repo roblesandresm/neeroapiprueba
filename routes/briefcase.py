@@ -8,7 +8,7 @@ from config.database import engine, Session
 from typing import List
 
 router = APIRouter(
-    prefix="/briefcases",
+    prefix="/api/briefcases",
     tags=["briefcases"]
 )
 
@@ -60,18 +60,3 @@ def delete_briefcase(id: int) -> dict:
     db.delete(result)
     db.commit()
     return JSONResponse(status_code=200, content={"message": "product delete with success"})
-
-# add product to briefcase 
-"""@router.post("/{briefcase_id}/product/{product_id}", tags=["briefcases"], response_model=dict)
-def add_product_to_briefcase(product_id: int = Path(le=1), briefcase_id: int = Path(le=1)):
-    db = Session()
-    get_briefcase = db.query(BriefcaseModel).filter(BriefcaseModel.id == briefcase_id).first()
-    if not get_briefcase:
-        return JSONResponse(status_code=404, content={"message": "el portafilio no existe"})
-    get_product = db.query(ProductModel).filter(ProductModel.id == product_id).first()
-    if not get_product:
-         return JSONResponse(status_code=404, content={"message": "No se puede agragar, producto no encontrado"})
-    get_briefcase.products.append(get_product)
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "Producto agregado al portafolio"})
-"""

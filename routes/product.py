@@ -7,7 +7,7 @@ from config.database import engine, Session
 from typing import List
 
 router = APIRouter(
-    prefix="/products",
+    prefix="/api/products",
     tags=["products"]
 )
 

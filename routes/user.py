@@ -7,30 +7,9 @@ from config.database import engine, Session
 from typing import List
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/api/users",
     tags=["users"]
 )
-
-users = [
-    {
-        "id": 1,
-        'first_name': 'Andres', 
-        'last_name': 'Robles',
-        'dni': 1254545355,
-        'email': "micorreo@gmail.com",
-        'password': 'mipassword123456',
-        'state': 1
-    },
-    {
-        "id": 2,
-        'first_name': 'Pedro', 
-        'last_name': 'Perez',
-        'dni': 2254533335,
-        'email': "pedro@gmail.com",
-        'password': '123456456',
-        'state': 1
-    }
-]
 
 # endpoint get all users
 @router.get("/")
